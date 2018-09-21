@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width,user-scalable=no" name="viewport">
+  <title>确认付款</title>
+  <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/Base64/1.0.0/base64.min.js"></script>
+  <script src="//res.wx.qq.com/open/js/jweixin-1.1.0.js"></script>
+  <script src="/weixin/wxsign2"></script>
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_17asf5ispdyj5rk9.css">
+  <link rel="stylesheet" href="/style/core.css">
+  <link rel="stylesheet" href="/style/pay_confirm.css">
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="fieldset-group fieldset-margin">
+      <div class="fieldset-line"></div>
+      <span class="fieldset-title">支付详情</span>
+    </div>
+    <div class="order-details-panel">
+      <div class="justify row">
+        <div class="dib">加油油号：</div>
+        <div class="dib">{{ srcdata.oilNo }}#</div>
+      </div>
+      <div class="justify row">
+        <div class="dib">加油金额：</div>
+        <div class="dib"><span class="rmb">&yen;</span>{{ srcdata.price }}</div>
+      </div>
+      <div class="justify row">
+        <div class="dib" style="letter-spacing: 4px">油单价：</div>
+        <div class="dib"><span class="rmb">&yen;</span>{{(srcdata.price/srcdata.dcp.quantity).toFixed(2)}}</div>
+      </div>
+      <div class="justify row">
+        <div class="dib">加油升数：</div>
+        <div class="dib">{{ srcdata.dcp.quantity }}L</div>
+      </div>
+      <div v-for="dc in srcdata.dcp.discount" class="justify row">
+        <div class="dib">{{dc.name}}：</div>
+        <div class="dib"><span class="rmb">&yen;</span>{{dc.value}}</div>
+      </div>
+      <div class="justify row">
+        <div class="dib">应付金额：</div>
+        <div class="dib pay-amount"><span class="rmb">&yen;</span>{{ srcdata.dcp.discounted_amount }}</div>
+      </div>
+    </div>
+    <div class="fieldset-group fieldset-margin">
+      <div class="fieldset-line"></div>
+      <span class="fieldset-title">支付方式</span>
+    </div>
+    <div class="pay-type-panel">
+      <label class="for-label" for="weixinPay" v-if="srcdata.paypattern.weixin">
+        <i class="iconfont icon-weixin"></i>
+        <i class="iconfont icon-tuijian-unicode">&#xe602;</i><span>微信支付</span>
+      </label>
+      <input id="weixinPay" type="radio" name="payType" checked v-model="paytype" value="weixin" v-if="srcdata.paypattern.weixin">
+
+      <label class="for-label" for="duolaPay" v-if="srcdata.paypattern.duola">
+        <i class="iconfont icon-weixin"></i>
+        <i class="iconfont icon-tuijian-unicode">&#xe602;</i><span>微信支付</span>
+      </label>
+      <input id="duolaPay" type="radio" name="payType" v-model="paytype" value="duola" v-if="srcdata.paypattern.duola">
+
+      <label class="for-label" for="aliPay" v-if="srcdata.paypattern.alipay">
+        <i class="iconfont icon-zhifubao"></i>
+        <i class="iconfont icon-tuijian-unicode" style="visibility: hidden">&#xe602;</i><span>支付宝支付</span>
+      </label>
+      <input id="aliPay" type="radio" name="payType" v-model="paytype" value="alipay" v-if="srcdata.paypattern.alipay">
+
+      <label class="for-label" for="balancePay" v-if="srcdata.paypattern.balance">
+        <i class="iconfont icon-yu_e" style="color:blue"></i>
+        <i class="iconfont icon-tuijian-unicode">&#xe602;</i><span>余额支付,不包含以上优惠(余额还有{{srcdata.balance/100}}元)</span>
+      </label>
+      <input id="balancePay" type="radio" name="payType" v-model="paytype" value="balance" v-if="srcdata.paypattern.balance">
+    </div>
+    <button @click="toPay" class="btn btn-block btn-bottom" :disabled="paybn_disable">下一步</button>
+  </div>
+  <script src="//cdn.bootcss.com/vue/2.1.10/vue.min.js"></script>
+<script>
+  var payconfirmdata={srcdata:<{paydata}>,paytype:"",paybn_disable:false}
+
+  for(type in payconfirmdata.srcdata.paypattern){
+    if(payconfirmdata.srcdata.paypattern[type]){
+        payconfirmdata.paytype=type
+        break
+    }
+  }
+ </script>
+  <script>
+  var app = new Vue({
+      el: "#app",
+      data: payconfirmdata,
+      methods: {
+          // 去付款
+          toPay: function () {
+              payconfirmdata.paybn_disable=true
+              var params={
+                  shopid:payconfirmdata.srcdata.sid,
+                  prise:payconfirmdata.srcdata.price,
+                  oliNo:payconfirmdata.srcdata.oilNo,
+                  qrid:payconfirmdata.srcdata.qrid,
+                  gunnum:payconfirmdata.srcdata.gunnum
+              }
+              if(payconfirmdata.paytype=="weixin"){
+                  $.ajax(
+                      {
+                          type : "POST",
+                          url:"/weixin/paystart",
+                          data: JSON.stringify(params),
+                          contentType: "application/json",
+                          dataType:"json",
+                          success:function (json) {
+                            WeixinJSBridge.invoke(
+                                  'getBrandWCPayRequest', json.data,
+                                  function(res){
+                                      if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                                        window.location.href=json.redirect;
+                                      }else if(res.err_msg == "get_brand_wcpay_request:cancel"){
+                                          alert("已取消支付")
+                                      }
+                                      else{alert(JSON.stringify(res))
+                                      }
+                                  }
+                              );
+                          },
+                          complete:function () {
+                              payconfirmdata.paybn_disable=false
+                          }
+                      })
+              }
+              else if(payconfirmdata.paytype=="alipay"){
+                  $.ajax(
+                      {
+                          type : "POST",
+                          url:"/alipay/start",
+                          data: JSON.stringify(params),
+                          contentType: "application/json",
+                          dataType:"json",
+                          success:function (json) {
+                             if(json.res==0){
+                                  try {
+                                      window.location.href = "/weixin_cpyurl.html?jump=" + btoa(encodeURIComponent(json.redirect))
+                                  }catch(e){
+                                    alert(e)
+                                  }
+                             }
+                          },
+                          complete:function () {
+                              payconfirmdata.paybn_disable=false
+                          }
+                      })
+              }
+              else if(payconfirmdata.paytype=="duola"){
+                  $.ajax({
+                      type: 'post',
+                      url: '/pay/duolabaopay',
+                      data: JSON.stringify(params),
+                      contentType: "application/json",
+                      dataType: 'json',
+                      traditional: true,
+                      success: function (data) {
+                          if(data.res==0)
+                              window.location.href=data.redirect
+                      },
+                      complete:function () {
+                          payconfirmdata.paybn_disable=false
+                      }
+                  })
+              }
+              else if(payconfirmdata.paytype=="balance"){
+                  $.ajax({
+                      type: 'post',
+                      url: '/pay/balance_pay',
+                      data: JSON.stringify(params),
+                      contentType: "application/json",
+                      dataType: 'json',
+                      traditional: true,
+                      success: function (data) {
+                        if(data.res==0){
+                          window.location.href=data.redirect;
+                          }else {
+                             alert(data.message)
+                          }
+
+                      },
+                      complete:function () {
+                          payconfirmdata.paybn_disable=false
+                      }
+                  })
+              }
+              else {
+                  alert("请选择支付方式")
+                  payconfirmdata.paybn_disable=false
+              }
+          }
+      }
+  });
+  wx.ready(function() {
+
+  })
+</script>
+</body>
+</html>

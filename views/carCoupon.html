@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>抵用券</title>
+  <meta content="width=device-width,user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="/style/min/core.css">
+  <link rel="stylesheet" href="/style/carCoupon.css">
+</head>
+<body>
+<div id="app" v-cloak>
+  <h1 v-if="excoupons.length === 0" class="not-record">暂时没有抵用券</h1>
+  <div class="deductible" v-for="excoupon in excoupons"
+       v-bind:style="{display: isActive ? 'block' : 'none' }">
+    <div class="deductibleLeft">
+      <P class="free">免费</P>
+      <P>抵用券</P>
+    </div>
+    <div class="deductibleRight">
+      <p class="trade">
+        <span>使用门店</span>
+        <i id="use" v-on:click="showQrcode(excoupon)">立即使用</i>
+      </p>
+      <p class="address">{{ excoupon.for_shop_str }}</p>
+      <b class="date">过期时间：{{ parseDate(excoupon.limit_time) }}</b>
+    </div>
+  </div>
+
+  <transition name="show">
+    <div id="mask" v-show="qrcode.show">
+      <h2>免费抵用券</h2>
+      <h4>{{ qrcode.shop }}</h4>
+      <p><canvas ref="qrcode"></canvas></p>
+      <i>请出示给工作人员扫码</i>
+      <div id="close" v-on:click="closeQrcode()">关闭</div>
+    </div>
+  </transition>
+</div>
+
+<script src="https://cdn.bootcss.com/qrious/4.0.2/qrious.min.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.3.4/vue.min.js"></script>
+<script>
+
+  var excoupons = <{excoupons}>;
+
+  var qr;
+  new Vue({
+    el: '#app',
+    data: {
+      excoupons: excoupons,
+      qrcode: {
+        show: false, // 是否显示二维码窗体
+        shop: '',
+        shopid: ''
+      },
+      isActive: true
+    },
+    // 组件挂载上后的回调
+    mounted: function() {
+      qr = new QRious({
+        element: this.$refs.qrcode,
+        level: 'H',
+        size: 280
+      }); // 构造一个二维码
+    },
+    methods: {
+      /**
+       * 解析日期
+       * @param isodate ISODate
+       * @returns {string}
+       */
+      parseDate: function(isodate) {
+        var date = new Date();
+        date.setTime(Date.parse(isodate));
+        return date.getFullYear() + '-' + (date.getMonth() + 1) +
+          '-' + date.getDate()
+      },
+      /**
+       * 显示二维码对话框
+       * @param eccoupon
+       */
+      showQrcode: function(excoupon) {
+        // 设置二维码窗体显示内容
+        this.qrcode.shopid = excoupon['_id'];
+        this.qrcode.shop = excoupon.for_shop_str;
+        this.qrcode.show = true; // 显示二维码窗体
+        this.isActive = false;
+      },
+      /**
+       * 隐藏二维码
+       */
+      closeQrcode: function() {
+        this.qrcode.show = false;
+        this.isActive = true;
+      }
+    },
+    watch: {
+      'qrcode.shopid': function(val) {
+        qr.value = val;
+      }
+    }
+  });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+@charset "UTF-8";
+html {
+  /*
+    文本大小根据设备尺寸进行调整(该属性只在移动设备上生效)
+    防止 iOS 横屏字号放大，同时保证在PC上 zoom 功能正常
+   */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* 1 */
+  font-size: 62.5%;
+  /* 10/16=62.5% */
+}
+
+/*
+ * 样式重置
+ * @ Author: haoran.shu
+ * @ Update: 2017-2-15 11:26:51;
+ */
+body {
+  font-size: 14px;
+  line-height: 1;
+  box-sizing: border-box;
+}
+body, input {
+  margin: 0;
+  padding: 0;
+}
+div, input {
+  box-sizing: border-box;
+}
+/**
+  * 所有 font-family 小写，存在空格的字体名加单引号
+  * @default-font: 'helvetica neue', tahoma, \5B8B\4F53, sans-serif;
+  * @heading-font: 'helvetica neue', tahoma, 'hiragino sans gb', stheiti,
+    \5FAE\8F6F\96C5\9ED1, \5B8B\4F53, 'wenquanyi micro hei', sans-serif;
+  * @code-font: monaco, menlo, consolas, monospace;
+  */
+/**
+  * 中文优先使用冬青黑体简体(OS X)、微软雅黑(Windows)和文泉驿微米黑(Linux)
+  * 西文使用 tahoma
+  * 1. 防止元素中「font-family」不能继承
+  * 2. 西文字体和 OS X 字体写在前面
+  * 3. Opera 12.1 之前版本不支持中文字体的英文名称
+  * 4. 微软雅黑「\5FAE\8F6F\96C5\9ED1」,中易宋体「\5B8B\4F53」
+  */
+body,
+button,
+input,
+select,
+textarea {
+  font-family: 'helvetica neue', arial, 'hiragino sans gb', stheiti, 'wenquanyi micro hei', \5FAE\8F6F\96C5\9ED1, \5B8B\4F53, sans-serif;
+  text-spacing: ideograph-alpha ideograph-numeric ideograph-parenthesis;
+}
+/**
+  * 1. 去除 IE6-9 和 Firefox 3 中 a 内部 img 元素默认的边框
+  * 2. 修正 IE8 图片消失bug
+  * 3. 防止 img 指定「height」时图片高度不能按照宽度等比缩放，导致图片变形
+      http://jsbin.com/aJoTUca/2
+  * 4. 让图片支持响应式
+  * 5. 去除现代浏览器图片底部的空隙
+  */
+img {
+  border-style: none; /* 1 */
+  width: auto\9; /* 2 */
+  height: auto; /* 3 */
+  max-width: 100%; /* 4 */
+  vertical-align: top; /* 5 */
+}
+
+/*
+ * 基础组件
+ * @ Author: haoran.shu
+ * @ Update: 2017-2-15 16:26:51;
+ */
+.btn {
+  border: 1px solid #43c05c;
+  outline: none;
+  padding: 10px;
+  background-color: #43c05c;
+  color: white;
+}
+.btn:active {
+  background-color: #43c26d;
+}
+.btn-block {
+  display: block;
+  width: 100%;
+  font-weight: bold;
+  font-size: 1.6rem;
+}
+/**
+ * 统一用双线显示人民币符号「&yen;(￥)」
+ */
+.rmb,
+.yuan {
+  font-family: arial;
+  font-style: normal;
+}
+
+/*
+ * 基础布局
+ * @ Author: haoran.shu
+ * @ Update: 2017-2-15 11:26:51;
+ */
+.dib {
+  display: inline-block;
+}
+/*
+ * inline-block 布局
+ * @ Author: haoran.shu
+ * @ Update: 2017-2-15 11:26:51;
+ */
+.dib-box {
+  font-size: 0;
+}
+.dib-box .dib {
+  vertical-align: top;
+  font-size: 1rem;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+/*
+ *@ Name:        自适应两端对齐组件
+ *@ Author:      haoran.shu
+ *@ Update:      2017-2-16 14:39:04
+ *@ Rely：       依赖 inline-block 解决方案
+ *@ Usage:       外层加上 justify，内部需要两端对齐的元素都加上 dib,dib 与 justify 不要同时出现
+ */
+/**
+* 防止行高增大
+* 尽量不要在父元素上设置行高
+*/
+.justify,
+.dib-box .justify {
+  font-size: 0;
+  line-height: inherit;
+}
+
+.justify {
+  text-align: justify;
+  text-justify: inter-ideograph;
+  -moz-text-align-last: justify;
+  text-align-last: justify;
+}
+
+/**
+* 不支持 text-align-last 的浏览器用伪元素模拟
+* 1. margin-left:100% 仅 WebKit 支持
+*/
+.justify:after {
+  content: "";
+  display: inline-block;
+  width: 100%; /* 1 */
+}
+
+/* 子元素取消两端对齐 */
+.justify .dib {
+  -moz-text-align-last: auto;
+  text-align-last: auto;
+  text-justify: auto;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+/*
+ * 类似于 --------------- title -------------这样的布局
+ * @ Author: haoran.shu
+ * @ Update: 2017-2-15 13:40:25;
+ */
+.fieldset-group {
+  width: 90%;
+  height: 2rem;
+  position: relative;
+  margin: auto;
+  font-size: 1rem;
+  line-height: 2rem;
+  vertical-align: middle;
+  text-align: center;
+}
+.fieldset-group .fieldset-line {
+  width: 100%;
+  height: 1px;
+  position: absolute;
+  top: 50%;
+  background-color: #c2c2c2;
+  z-index: -1;
+}
+.fieldset-title {
+  background-color: #eaeaea;
+  padding: 0 10px;
+  color: #b5b5b5;
+  font-weight: bold;
+}
+body {
+  background-color: #eaeaea;
+}
+[v-cloak] {
+  visibility: hidden;
+}

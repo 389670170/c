@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//cdn.staticfile.org/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//cdn.staticfile.org/artTemplate.js/3.0.1/template.js"></script>
+</head>
+<body>
+<div id="main">
+
+</div>
+
+<script id="a_sub" type="text/html">
+    <a href="http://www.baidu.com">baidu</a>
+</script>
+<script id="b_sub" type="text/html">
+    <a href="http://www.qq.com">qq</a>
+</script>
+<script id="list_tpl" type="text/html">
+    {{include(subtpl)}}
+    <ol>
+        {{each list as one}}
+        <li>
+            {{ one.message }} {{one.createdAt}}
+        </li>
+        {{/each}}
+    </ol>
+</script>
+
+<script>
+    $('#main').html(template("list_tpl",{list:<{listdata}>,subtpl:"b_sub"}))
+</script>
+
+</body>
+</html>

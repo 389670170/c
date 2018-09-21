@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,user-scalable=no" name="viewport">
+    <title>order</title>
+    <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//res.wx.qq.com/open/js/jweixin-1.1.0.js"></script>
+    <script src="/javascript/weixinsign.js"></script>
+</head>
+<body>
+<a href="/login/phone">修改手机号</a>
+<input type="text" id="prise" value="0.01"><br>
+<input type="button" id="bnpay" value="pay">
+<input type="button" id="weixinpay" value="weixin pay">
+<script>
+    $("#bnpay").on("click",function () {
+        var params={
+            shopid:1,
+            prise:$("#prise").val()
+        }
+        $.ajax({
+            type: 'post',
+            url: '/pay/duolabaopay',
+            data: JSON.stringify(params),
+            contentType: "application/json",
+            dataType: 'json',
+            traditional: true,
+            success: function (data) {
+                if(data.res==0)
+                    window.location.href=data.redirect
+            }
+        })
+    })
+
+    wx.ready(function(){
+
+    });
+    function onBridgeReady(){
+        $("#weixinpay").on("click",function () {
+            var params={
+                shopid:1,
+                prise:$("#prise").val()
+            }
+            $.ajax(
+                {
+                    type : "POST",
+                    url:"/weixin/paystart",
+                    data: JSON.stringify(params),
+                    contentType: "application/json",
+                    dataType:"json",
+                    success:function (json) {
+                        WeixinJSBridge.invoke(
+                            'getBrandWCPayRequest', json,
+                            function(res){
+                                if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                                    alert("支付已成功")
+                                }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+                            }
+                        );
+
+                    }
+                })
+        })
+    }
+    if (typeof WeixinJSBridge == "undefined"){
+        if( document.addEventListener ){
+            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+        }else if (document.attachEvent){
+            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+        }
+    }else{
+        onBridgeReady();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width,user-scalable=no" name="viewport">
+  <title>充值明细</title>
+  <link rel="stylesheet" href="/style/min/core.css">
+  <link rel="stylesheet" href="/style/min/trade_detail.css">
+</head>
+<body>
+  <div id="app">
+    <div class="justify">
+      <div class="dib">支付金额</div>
+      <div class="rmb dib amount">&yen;{{ amount / 100 }}</div>
+    </div>
+    <hr>
+    <div class="justify">
+      <div class="dib">交易类型</div>
+      <div class="dib">{{ payType(paytype) }}充值</div>
+    </div>
+    <div class="justify">
+      <div class="dib">时&emsp;&emsp;间</div>
+      <div class="dib">{{ payTime(paytime) }}</div>
+    </div>
+    <div class="justify">
+      <div class="dib">交易订单</div>
+      <div class="dib">{{ oid }}</div>
+    </div>
+  </div>
+
+  <script src="//cdn.bootcss.com/vue/2.1.10/vue.min.js"></script>
+  <script src="/javascript/dateformat.js"></script>
+  <script>
+    var data = <{orderData}>;
+    new Vue({
+      el: "#app",
+      data: data,
+      methods: {
+        payType: function (payType) {
+          switch (payType) {
+            case 1:
+              return '微信'//'哆啦宝';
+            case 2:
+              return '微信';
+            case 3:
+              return '支付宝';
+              case 4:
+                  return '余额'
+            default:
+              return '微信';
+          }
+        },
+        payTime: function (paytime) {
+          return new Date(paytime).toFormatString('yyyy-MM-dd HH:mm:ss');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

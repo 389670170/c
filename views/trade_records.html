@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width,user-scalable=no" name="viewport">
+  <title>交易记录</title>
+  <link rel="stylesheet" href="/style/min/core.css">
+  <link rel="stylesheet" href="/style/min/trade_records.css">
+  <style>
+    body{
+      background: #E8EBED;
+    }
+    .row{
+      margin: 0;
+      padding: 0;
+      background: white;
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .row h6{
+      color: #999999;
+      padding: 7px 11px;
+      margin: 0;
+      font-weight: normal;
+      font-size: 16px;
+      border-bottom: 1px solid #E8EBED;
+    }
+    .rowall{
+      width: 100%;
+      padding: 0 11px;
+      overflow: hidden;
+    }
+    .rowall .left{
+      width: 50%;
+      float: left;
+      text-align: left;
+    }
+    .rowall .left p:first-child,.rowall .right p:first-child{
+      padding-top: 11px;
+      font-size: 20px;
+      color: #333333;
+      margin: 0;
+      font-weight: bold;
+    }
+    .rowall .left p:last-child,.rowall .right p:last-child{
+      margin: 0;
+      font-size: 16px;
+      color: #999999;
+      line-height: 30px;
+    }
+    .rowall .right{
+      width: 50%;
+      float: right;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1 v-if="records.length <= 0" class="not-record">没有任何交易记录</h1>
+    <template v-for="item in records">
+      <div class="row" @click="orderDetail(item.oid, item.type)">
+        <h6>{{ payTime(item.paytime) }}</h6>
+        <div class="rowall">
+          <div class="left">
+            <p>
+              <span v-if="item.type === 1">消费</span>
+              <span v-if="item.type === 2">充值</span>
+            </p>
+            <p>{{ payType(item.paytype) }}</p>
+          </div>
+          <div class="right">
+            <p>
+              <span v-if="item.type === 1">-{{ item.amount / 100 }}</span>
+              <span v-if="item.type === 2">+{{ item.amount / 100 }}</span>
+            </p>
+            <p>
+              <span v-if="item.type === 1">消费成功</span>
+              <span v-if="item.type === 2">充值成功</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <script src="//cdn.bootcss.com/vue/2.1.10/vue.min.js"></script>
+  <script src="/javascript/dateformat.js"></script>
+  <script>
+    var data = {records: <{ordersData}>};
+    new Vue({
+      el: "#app",
+      data: data,
+      methods: {
+        payType: function (payType) {
+          switch (payType) {
+            case 1:
+              return '微信支付'//'哆啦宝支付';
+            case 2:
+              return '微信支付';
+            case 3:
+              return '支付宝支付';
+              case 4:
+                  return "余额支付"
+            default:
+              return '微信支付';
+          }
+        },
+        payTime: function (paytime) {
+          return new Date(paytime).toFormatString('yyyy-MM-dd HH:mm:ss');
+        },
+        orderDetail: function (oid, type) {
+          location.href = '/pay/orderDetail/' + oid + '/' + type;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

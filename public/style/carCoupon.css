@@ -1,0 +1,124 @@
+.deductible{
+  overflow: hidden;
+  width:  90%;
+  margin: 5% 5%;
+  border:1px solid #666;
+  border-radius: 4px;
+  background: orangered;
+}
+.deductibleLeft{
+  overflow: hidden;
+  text-align: center;
+  width: 20%;
+  float: left;
+  background: antiquewhite;
+}
+.deductibleLeft .free{
+  width: 26px;
+  margin: 38.5% auto;
+  font-weight: bold;
+  font-size: 16px;
+}
+.deductibleRight{
+  overflow: hidden;
+  width: 80%;
+  float: right;
+  /*background: url("http://oqcdoekqa.bkt.clouddn.com/car.png") no-repeat right bottom;*/
+  /*background-size: 50% 40%;*/
+  background: linear-gradient(to bottom right, red , orange);
+}
+.deductibleRight .trade{
+  width: 100%;
+  float: left;
+  color: wheat;
+  margin: 0;
+  margin: 5% 0;
+}
+.deductibleRight .trade span{
+  width: 50%;
+  float: left;
+  text-indent: 8px;
+}
+.deductibleRight #use{
+  display: inline-block;
+  padding: 3px 0;
+  width: 40%;
+  border: 1px solid;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+  margin: 0;
+  font-style: normal;
+}
+.deductibleRight .address{
+  padding-left: 8px;
+  color: wheat;
+  font-size:14px;
+}
+.deductibleRight .date{
+  text-indent: 8px;
+  color: wheat;
+  font-size:14px;
+  font-weight: normal;
+  display: block;
+}
+html,body{
+  height: 100%;
+}
+#app{
+  height: 100%;
+}
+
+#mask{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top:0;
+  left: 0;
+  background: #EAEAEA;
+  text-align: center;
+}
+#mask i{
+  display: block;
+  color: red;
+  font-style: normal;
+}
+#close{
+  color:white ;
+  overflow: hidden;
+  padding: 2%;
+  border-radius: 2px;
+  margin-top: 10%;
+  background: cornflowerblue;
+  font-size: 15px;
+}
+[v-cloak] {
+  display: none;
+}
+
+/* 定义 显示的时候动画, 隐藏的时候的动画 */
+.show-enter-active {
+  animation:moveUp .3s linear;
+
+}
+/* 定义开始显示时的初始状态, 隐藏元素后的状态 */
+.show-leave-to {
+  animation:moveDown .3s linear;
+}
+@keyframes moveUp{
+  0% {top: 100%;}
+  25% {top: 75%;}
+  50% {top: 50%;}
+  75% {top: 25%;}
+  100% {top: 0;}
+}
+@keyframes moveDown{
+  0% {top: 0;}
+  25% {top: 25%;}
+  50% {top: 50%;}
+  75% {top: 75%;}
+  100% {top: 100%;}
+}
+.not-record{
+  text-align: center;
+}

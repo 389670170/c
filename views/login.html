@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width,user-scalable=no" name="viewport">
+  <title>完善用户资料</title>
+  <link rel="stylesheet" href="/style/core.css">
+  <link rel="stylesheet" href="/style/login.css">
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="dib-box box">
+      <div class="dib label">姓名</div>
+      <div class="dib input-panel">
+        <input @blur="getValue(3, $event)" type="text" placeholder="请输入姓名" class="input">
+      </div>
+    </div>
+    <div class="dib-box box">
+      <div class="dib label">手机号</div>
+      <div class="dib input-panel">
+        <input @blur="getValue(1, $event)" type="text" placeholder="请输入11位手机号" class="input">
+      </div>
+    </div>
+    <div class="dib-box code-panel">
+      <div class="dib code-input-panel">
+        <input @blur="getValue(2, $event)" type="number" placeholder="请输入验证码">
+      </div>
+      <div class="dib btn-panel">
+        <button @click="getCode" :disabled="codeBtnDisabled" v-text="codeTitle">获取验证码</button>
+      </div>
+    </div>
+    <button @click="login" class="btn btn-block btn-login">提 交</button>
+  </div>
+
+
+  <script src="//cdn.bootcss.com/vue/2.1.10/vue.min.js"></script>
+  <script src="//cdn.bootcss.com/axios/0.15.3/axios.js"></script>
+
+  <script>
+    var data = {
+      loading: false, // 是否正在加载数据,标识网络连接
+      codeTitle: "获取验证码",
+      codeBtnDisabled: false, // 获取验证码按钮是否可用
+      phone: "",
+      code: "",
+      name: "",
+      jumpback: "<{backurl}>"
+    };
+    var app = new Vue({
+      el: "#app",
+      data: data,
+      methods: {
+        getCode: function () {
+          if(!data.loading) {
+            if (data.phone.length > 0) {
+              this.loading = true;
+              // 获取验证码 http request ……
+              axios.post("/login/sendCode", {}, {params:{mobile:data.phone}})
+                .then(function (response) {
+                  data.loading = false;
+                  app.countDown(); // 执行倒计时
+                })
+                .catch(function (err) {
+                  data.loading = false;
+                  console.error(err);
+                });
+            } else {
+              alert("请输入手机号");
+            }
+          }
+        },
+        countDown: function () { // 倒计时 60 s
+          data.codeBtnDisabled = true; // 禁用获取验证码按钮
+          var count = 60;
+          var t = setInterval(function () {
+            count--;
+            if (count == 0) {
+              data.codeTitle = "获取验证码";
+              data.codeBtnDisabled = false;
+              clearInterval(t);
+            } else {
+              data.codeTitle = count + "";
+            }
+          }, 1000); // 1 s 执行一次
+        },
+        getValue: function (type, event) {
+          var target = event.target;
+          if (target.validity.valid) { // 有效值
+            if (type === 1) {
+              data.phone = target.value;
+            } else if (type === 2) {
+              data.code = target.value;
+            } else if(type === 3) {
+              data.name = target.value;
+            }
+          }
+        },
+        login: function () {
+          if(data.phone.length <= 0) {
+            alert("请输入手机号");
+            return;
+          }
+          if(data.code.length <= 0) {
+            alert("请输入验证码");
+            return;
+          }
+          if(data.name.length<=0){
+              alert("请输入姓名")
+              return
+          }
+          if (!data.loading) { // 如果正在进行数据获取,则直接跳过
+            data.loading = true; // 表明正在获取数据
+            // 登录 http request……
+            axios.get("/login/phone_submit?code="+data.code+"&name="+data.name)
+              .then(function (response) {
+                var datares = response.data;
+                data.loading = false;
+                if(datares.res==0){
+                  if(datares.redirect)
+                    window.location.href=datares.redirect;
+                  else if(data.jumpback){
+                    window.location.href = data.jumpback;
+                  }else {
+                      wx.closeWindow()
+                  }
+                }else{
+                  alert(datares.message);
+                }
+              })
+              .catch(function (err) {
+                data.loading = false;
+                alert(err.message);
+              });
+          }
+        }
+      }
+    });
+  </script>
+  <script src="//res.wx.qq.com/open/js/jweixin-1.1.0.js"></script>
+  <script src="/javascript/weixinsign.js"></script>
+</body>
+</html>

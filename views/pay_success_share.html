@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"/>
+  <title>处理结果</title>
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_413119_qea55d9uwwdygb9.css" />
+  <style>
+    .wrapper,.immg{margin:35vh auto 0;width:90%;text-align:center}
+    .iconfont{font-size:50px}
+    .icon-xiaolian{color:orange}
+    .icon-kulian{color:#666}
+    .text{color:#7f4649;font-weight:700;font-size:25px;font-family:Cursive}
+    .icon-chenggong{color:green}
+    .icon-cuowu{color:red}
+    .hb-fx-btnBox{
+      text-align: center;
+    }
+    .hb-fx-btnBox a{
+      display: block;
+      width: 6rem;
+      height: 2rem;
+      border-radius: .3rem;
+      background: #CD1E20;
+      font-size: .9rem;
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      line-height: 1.6;
+      padding: 0.3rem .6rem;
+      margin: 0 auto;
+    }
+  </style>
+  <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+<div class="wrapper">
+  <i class="iconfont icon-chenggong"></i>
+  <p class="text">恭喜你！支付成功</p>
+</div>
+<div class="hb-fx-btnBox">
+  <a href="" class="fhb-btn">发红包</a>
+</div>
+<div class="immg">
+  <img src="http://oqcdoekqa.bkt.clouddn.com/%E5%8A%A0%E8%BD%BD.gif" alt="">
+</div>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  var iconNode = document.querySelector(".iconfont");
+  var textNode = document.querySelector(".text");
+  $('.wrapper').hide();
+  $('.hb-fx-btnBox').hide();
+  function parseSearch() {
+    var searchs = {};
+    var search = location.search.slice(1).split("?");
+    search.forEach(function(item) {
+      item.split("&").forEach(function (item2) {
+        item2 = item2.split("=");
+        searchs[item2[0]] = item2[1];
+      })
+    });
+    return searchs;
+  }
+  var search = parseSearch(); // 解析请求参数
+  var stop=setInterval(function(){
+    $.get('coupon/findStatus',{oid:search.oid},function (res) {
+      if(res.res==0){
+        $('.wrapper').show();
+        $('.hb-fx-btnBox').show();
+        $('.immg').hide();
+        $('.fhb-btn').attr('href','/coupon/startShare?src='+res.coupon);
+        clearInterval(stop)
+      }else if(res.res==2){
+        $('.wrapper').show();
+        iconNode.className = "iconfont icon-cuowu";
+        textNode.textContent = "很抱歉,支付失败";
+        $('.immg').hide();
+        clearInterval(stop)
+      }else if(res.res==1){
+        $('.immg').hide();
+        $('.wrapper').show();
+        clearInterval(stop)
+      }else {
+        $('.immg').hide();
+        clearInterval(stop)
+        $('.wrapper').show();
+        iconNode.className = "iconfont icon-cuowu";
+        textNode.textContent = "对不起,网络故障";
+      }
+    },"json")
+  }, 3000);
+
+</script>
+</body>
+</html>

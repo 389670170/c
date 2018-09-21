@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width,user-scalable=no" name="viewport">
+  <meta name="format-detection" content="telephone=no" />
+  <title>加油</title>
+  <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+  <script src="//res.wx.qq.com/open/js/jweixin-1.1.0.js"></script>
+  <script src="/weixin/wxsign2"></script>
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_j4hbdaupnikbuik9.css">
+  <link rel="stylesheet" href="/style/core.css">
+  <link rel="stylesheet" href="/style/oil_order.css">
+  <style lang="en">
+    .car{
+      /*float: right;*/
+      border: 0;
+      overflow: hidden;
+      height: 23px;
+      margin-top:5px;
+    }
+    #selectext{
+     position: relative;
+      top:-33px;
+      left:93%;
+    }
+    .dib-box{
+      width: 100%;
+    }
+    .dib-box input,.dib-box label{
+      font-size: 16px;
+    }
+    .dib-box label{
+      box-sizing: border-box;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+  <!-- 加油站名称 -->
+  <div class="input-group" style="line-height:38px;height: 38px">
+    <i class="iconfont icon-dingwei icon"></i>
+    <img class="divider" src="">
+    <input :value="shopinfo.name" style="font-size: 14px" disabled>
+  </div>
+  <div v-if="Object.keys(oilgun).length == 0" class="fieldset-group">
+    <div class="fieldset-line"></div>
+    <span class="fieldset-title"  style="font-size: 14px">选择加油油号</span>
+  </div>
+  <div v-if="Object.keys(oilgun).length == 0" class="dib-box">
+    <template v-for="(value, key) in oilinfo">
+      <input v-if="value" name="oilNo" :id="'oilid'+key" type="radio" class="radiobox" v-model="oilNo" :value="key">
+      <label v-if="value" :for="'oilid'+key">{{key}}#</label>
+    </template>
+  </div>
+    <!--油枪号-->
+    <div v-if="Object.keys(oilgun).length > 0" class="input-group">
+      <i class="iconfont icon-youqiang icon"></i>
+      <img class="divider" src="">
+      <!--<div class="car">-->
+        <input type="text" placeholder="请输入油枪号" v-model="gunnum" id="inputext" >
+        <select name="" id="selectext" v-model="gunnum_sel" style="border: 0;width: 20px;">
+          <option v-for="(value,key) in oilgun">
+            {{ key }}
+          </option>
+        </select>
+
+      <!--</div>-->
+    </div>
+
+  <!-- 加油金额 -->
+  <div class="input-group" style="line-height:38px;height: 38px">
+    <i class="iconfont icon-yu_e icon"></i>
+    <img class="divider" src="">
+    <input type="number" placeholder="请输入加油金额" style="font-size: 14px" v-model="amount">
+  </div>
+
+  <p v-if="pricemsg" style="margin: 10px 50px; color: #666">{{pricemsg}}</p>
+    <div class="dib-box">
+    <input name="amount" id="150" type="radio" class="radiobox" v-model="amount" value="150">
+    <label for="150" class="btnAmount">&yen;150</label>
+    <input name="amount" id="200" type="radio" class="radiobox" v-model="amount" value="200">
+    <label for="200" class="btnAmount" >&yen;200</label>
+    <input name="amount" id="300" type="radio" class="radiobox" v-model="amount" value="300">
+    <label for="300" class="btnAmount">&yen;300</label>
+    <!--input name="amount" id="1" type="radio" class="radiobox" v-model="amount" value="0.01">
+    <label for="1" class="btnAmount">&yen;0.01</label-->
+  </div>
+  <button @click="toPay" class="btn btn-block btn-bottom">下一步</button>
+  </div>
+
+  <script src="//cdn.bootcss.com/vue/2.1.10/vue.min.js"></script>
+  <script>
+    var appData = {
+      sid: <{sid}>, // 加油站商户id
+      oilNo: null, // 选择的油号
+        gunnum:"",
+        gunnum_sel:"",
+      amount: '', // 加油金额
+        shopinfo:<{shopinfo}>,
+      oilinfo:<{oilinfo}>,
+    oilgun:<{oilgun}>,
+    qrid:"<{qrid}>",
+        pricemsg:null
+    };
+    var app = new Vue({
+      el: "#app",
+      data: appData,
+      methods: {
+        // 去付款
+        toPay: function () {
+            if(!appData.amount){
+              alert("请输入加油金额")
+                return
+            }
+            if(appData.oilNo==null){
+                if(Object.keys(appData.oilgun).length > 0) {
+                    alert("请输入正确的油枪")
+                    return
+                }
+                alert("请选择油号")
+                return
+            }
+
+            window.location.href="/pay/confirm?sid="+appData.sid+"&price="+appData.amount+
+                "&oilNo="+appData.oilNo+"&qrid="+appData.qrid+"&gunnum="+appData.gunnum
+        }
+      },
+        watch: {
+            gunnum: function (val) {
+                if(val in this.oilgun){
+                    this.oilNo=this.oilgun[val]
+
+                }
+                else{
+                    this.oilNo=null
+                }
+            },
+            oilNo:function (val) {
+                if(val!=null){
+                    this.pricemsg="当前油号："+this.oilNo+"，当前油价："+this.oilinfo[this.oilNo]+"￥"
+                }else{
+                    this.pricemsg=""
+                }
+            },
+            gunnum_sel:function (val) {
+                this.gunnum=val
+            }
+        }
+    });
+
+    wx.ready(function(){
+        if(!appData.sid) {
+            wx.getLocation({
+                type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+                success: function (res) {
+                    var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                    var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                    var speed = res.speed; // 速度，以米/每秒计
+                    var accuracy = res.accuracy; // 位置精度
+                    if(latitude && longitude)
+                    $.get("/pay/gpsShopdata?lng="+longitude+"&lat="+latitude,function (data) {
+                        if(data.errno==0){
+                            appData.sid=data.sid
+                            appData.shopinfo=data.shopinfo
+                            appData.oilinfo=data.oilinfo
+                            appData.oilgun=data.oilgun
+                        }else{
+                            alert(data.message)
+                        }
+                    },"json")
+                },
+            });
+        }
+    });
+  </script>
+</body>
+</html>

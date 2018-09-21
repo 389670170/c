@@ -1,0 +1,47 @@
+body{
+  background: #E8EBED;
+}
+.row{
+  margin: 0;
+  padding: 0;
+  background: white;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.row h6{
+  color: #999999;
+  padding: 7px 11px;
+  margin: 0;
+  font-weight: normal;
+  font-size: 13px;
+  border-bottom: 1px solid #E8EBED;
+}
+.rowall{
+  width: 100%;
+  padding: 0 11px;
+  overflow: hidden;
+}
+.rowall .left{
+  width: 50%;
+  float: left;
+  text-align: left;
+}
+.rowall .left p:first-child,.rowall .right p:first-child{
+  padding-top: 11px;
+  font-size: 30px;
+  color: #333333;
+  margin: 0;
+  font-weight: bold;
+}
+.rowall .left p:last-child,.rowall .right p:last-child{
+  margin: 0;
+  font-size: 13px;
+  color: #999999;
+  line-height: 30px;
+}
+.rowall .right{
+  width: 50%;
+  float: right;
+  text-align: right;
+}

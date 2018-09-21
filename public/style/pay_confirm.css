@@ -1,0 +1,52 @@
+@charset "UTF-8";
+.fieldset-margin {
+  margin: 1rem auto;
+}
+.pay-type-panel, .order-details-panel {
+  width: 90%;
+  margin: auto;
+  padding: 5px;
+}
+.order-details-panel {
+  background-color: white;
+}
+.order-details-panel .row {
+  padding: 3px 10px;
+}
+.row div:nth-child(1) {
+  width: 80%;
+  font-weight: bold;
+}
+.row div:nth-child(2) {
+  width: 20%;
+}
+.row .fs13 {
+  font-size: 1.5rem;
+}
+.row .pay-amount {
+  font-size: 1.5rem;
+  color: red;
+  font-weight: bold;
+}
+.btn-bottom {
+  position: fixed;
+  bottom: 0;
+  z-index: 10;
+}
+.icon-weixin {
+  color: #43c05d;
+}
+.icon-zhifubao {
+  color: #339edf;
+}
+.for-label {
+  display: inline-block;
+  width: 90%;
+  margin: 5px 0;
+  word-break: break-all;
+}
+.for-label .icon-tuijian-unicode {
+  font-size: 12px;
+  vertical-align: top;
+  color: #43c05d;
+}

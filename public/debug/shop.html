@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+<input type="text" placeholder="shopname" name="name"><br>
+<input type="text" placeholder="desc" name="desc"><br>
+<input type="text" placeholder="lng" name="lng"><br>
+<input type="text" placeholder="lat" name="lat"><br>
+<input type="text" placeholder="tel" name="tel"><br>
+<input type="button" id="sub" value="submit">
+<script>
+    $("#sub").on("click",function () {
+        var params={}
+        $("input[name]").each(function () {
+            params[$(this).attr("name")]=$(this).val()
+        })
+        $.ajax({
+            type: 'post',
+            url: '/debug/createshop',
+            data: JSON.stringify(params),
+            contentType: "application/json",
+            //dataType: 'json',
+            traditional: true,
+            success: function (data) {
+                alert(data)
+            }
+        })
+    })
+</script>
+</body>
+</html>

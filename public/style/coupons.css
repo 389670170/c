@@ -1,0 +1,49 @@
+.packet {
+  width: 90%;
+  height: 100px;
+  margin: 20px auto;
+  border-radius: 5px;
+  display: table;
+  font-size: 1.6rem;
+}
+.red_bor {
+  border: 1px solid #FF0028;
+  box-shadow:5px 5px 10px #FFA9A9;
+}
+.gray_bor {
+  border: 1px solid #747474;
+  box-shadow:5px 5px 10px #DBDBDB;
+}
+.left {
+  width: 35%;
+  background: #FF0028;
+  border-radius: 5px;
+  text-align: center;
+  padding: 15px 0;
+  display: table-cell;
+  vertical-align: middle;
+}
+.left-gray {
+  background: #747474;
+}
+.right {
+  width: 60%;
+  text-align: center;
+  padding: 15px 0;
+  display: table-cell;
+  vertical-align: middle;
+}
+.white {
+  color: #fff;
+}
+.amount {
+  font-weight: bold;
+  font-size: 1.6em;
+}
+.limit-time {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+.shop-name {
+  font-size: 15px;
+}

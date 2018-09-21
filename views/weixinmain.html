@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable =no">
+    <title>Title</title>
+    <script src="//cdn.staticfile.org/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//cdn.staticfile.org/vue/2.1.6/vue.min.js"></script>
+    <script src="//res.wx.qq.com/open/js/jweixin-1.1.0.js"></script>
+    <script src="//cdn.staticfile.org/crypto-js/3.1.2/components/core-min.js"></script>
+    <script src="//cdn.staticfile.org/crypto-js/3.1.2/rollups/md5.js"></script>
+    <script src="/javascript/weixinsign.js"></script>
+    <script src="/javascript/weixintools.js"></script>
+</head>
+<body>
+<div id="app">
+    <img style="width: 100%" :src="headimgurl">
+    <p>{{nickname}}</p>
+    <p>{{openid}}</p>
+</div>
+<input style="width: 100%;height: 30px" type="button" value="pay" id="pay">
+<div id="message"></div>
+<script>
+    var data=<{userinfo}>;
+    var app = new Vue({
+        el: '#app',
+        data: data
+    })
+
+    wx.ready(function(){
+        $("#message").text("weixin ready")
+    });
+
+
+
+    function onBridgeReady(){
+        $("#pay").on("click",function () {
+            $.ajax(
+                {
+                    type : "GET",
+                    url:"/weixin/paystart",
+                    dataType:"json",
+                    success:function (json) {
+
+                        WeixinJSBridge.invoke(
+                            'getBrandWCPayRequest', json,
+                            function(res){
+                                alert(JSON.stringify(res))
+                                if(res.err_msg == "get_brand_wcpay_request:ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+                            }
+                        );
+
+                    }
+                })
+        })
+
+    }
+    if (typeof WeixinJSBridge == "undefined"){
+        if( document.addEventListener ){
+            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+        }else if (document.attachEvent){
+            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+        }
+    }else{
+        onBridgeReady();
+    }
+</script>
+</body>
+</html>

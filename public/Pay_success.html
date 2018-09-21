@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"/>
+	<link rel="stylesheet" href="https://at.alicdn.com/t/font_413119_qea55d9uwwdygb9.css" />
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+	<title>处理结果</title>
+	<style>
+	  .wrapper{margin:35vh auto 0;width:90%;text-align:center}
+	  .iconfont{font-size:50px}
+	  .icon-xiaolian{color:orange}
+	  .icon-kulian{color:#666}
+	  .text{color:#7f4649;font-weight:700;font-size:25px;font-family:Cursive}
+	  .icon-chenggong{color:green}
+	  .icon-cuowu{color:red}
+	</style>
+</head>
+<body>
+  <div class="wrapper">
+    <i class="iconfont icon-chenggong"></i>
+	<p class="text">恭喜你！支付成功</p>
+  </div>
+
+  <script>
+    var iconNode = document.querySelector(".iconfont");
+	var textNode = document.querySelector(".text");
+	/*
+	  解析请求参数, ? 后面
+	  页面需要的参数：
+	    type: 类型,0 -- 支付, 1 -- 注册
+		status: 状态, 0 -- 支付成功|注册成功有红包, 1 -- 支付失败|已注册, 2 -- 注册成功没红包
+	*/
+    function parseSearch() {
+	  var searchs = {};
+	  var search = location.search.slice(1).split("?");
+	  search.forEach(function(item) {
+      item.split("&").forEach(function (item2) {
+        item2 = item2.split("=");
+        searchs[item2[0]] = Number(item2[1]);
+      })
+	  });
+	  return searchs;
+	}
+	var search = parseSearch(); // 解析请求参数
+	if(search.type === 0) { // 支付
+	  if(search.status === 1) {
+	    iconNode.className = "iconfont icon-cuowu";
+		  textNode.textContent = "很抱歉,支付失败";
+	  }
+	} else if(search.type === 1) { // 注册成功
+	  if(search.status === 0) {
+	    iconNode.className = "iconfont icon-xiaolian";
+		textNode.innerHTML = "恭喜您,获得了若干注册红包<br>请到我的红包中查看";
+	  } else if(search.status === 1) {
+	    iconNode.className = "iconfont icon-kulian";
+		textNode.innerHTML = "抱歉,您已注册过了<br>不能参加本次活动!";
+	  } else if(search.status === 2) {
+	    iconNode.className = "iconfont icon-kulian";
+		textNode.textContent = "抱歉,活动已过期!";
+	  }
+	}else if(search.type===2){  //充值成功
+    textNode.textContent = "恭喜你！充值成功!";
+  }
+  </script>
+</body>
+</html>

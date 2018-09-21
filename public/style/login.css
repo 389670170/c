@@ -1,0 +1,70 @@
+body {
+  padding: 5px;
+}
+.box {
+  border: 1px solid #c7100e;
+  border-radius: 5px;
+  background-color: white;
+  margin-top: 1.5rem;
+}
+.box .label {
+  width: 25%;
+  background-color: #c7100e;
+  border-radius: 5px;
+  height: 100%;
+  text-align: center;
+  color: white;
+  line-height: 3rem;
+}
+.box .input-panel {
+  width: 75%;
+}
+.input {
+  width: 100%;
+  line-height: 3rem;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding-left: 2em;
+  padding-right: 5px;
+}
+.code-panel {
+  margin-top: 1.5rem;
+}
+.code-panel .code-input-panel {
+  width: 60%;
+  vertical-align: middle;
+  padding-right: 1.5em;
+}
+.code-input-panel input {
+  width: 100%;
+  line-height: 2.5rem;
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid gray;
+  padding: 0 5px;
+}
+.code-panel .btn-panel {
+  width: 40%;
+}
+.btn-panel button {
+  width: 100%;
+  background-color: #c7100e;
+  border: none;
+  outline: none;
+  color: white;
+  line-height: 3rem;
+}
+.code-panel .code-input-panel, .code-panel .btn-panel {
+  vertical-align: middle;
+}
+.btn-login {
+  box-sizing: border-box;
+  background-color: #c7100e;
+  border: none;
+  width: calc(100% - 10px);
+  margin: 3rem 5px 0 5px;
+}
+.btn-login:active {
+  background-color: #c7100e;
+}

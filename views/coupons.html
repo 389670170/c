@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>红包列表</title>
+  <meta content="width=device-width,user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="/style/min/core.css">
+  <link rel="stylesheet" href="/style/min/coupons.css">
+</head>
+<body>
+
+  <div id="app">
+    <h1 v-if="coupons.length <= 0" class="not-record">暂时没有任何红包</h1>
+    <template v-for="item in coupons">
+      <template v-if="isNormal(item)">
+        <div class="packet red_bor">
+          <div class="left">
+            <span class="white rmb amount">&yen;{{ item.amount }}</span><br>
+            <span class="white">满{{ item.pay_price }}可用</span>
+          </div>
+          <div class="right">
+            <span class="limit-time">有效期：{{ getLocalDate(item.limit_time) }}</span><br>
+            <span class="shop-name">仅限{{ item.for_shop_str }}使用</span>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <div class="packet gray_bor">
+          <div class="left left-gray">
+            <span class="white rmb amount">&yen;{{ item.amount }}</span><br>
+            <span class="white">满{{ item.pay_price }}可用</span>
+          </div>
+          <div class="right">
+            <span class="limit-time">有效期：{{ getLocalDate(item.limit_time) }}</span><br>
+            <span class="shop-name">仅限{{ item.for_shop_str }}使用</span>
+          </div>
+        </div>
+      </template>
+    </template>
+  </div>
+
+  <script src="//cdn.bootcss.com/vue/2.1.10/vue.min.js"></script>
+  <script>
+    var data = {coupons: <{coupons}>};
+    new Vue({
+      el: "#app",
+      data: data,
+      methods: {
+        /* 计算红包状态 */
+        isNormal: function (i) {
+          // 判断红包是否已经使用或者已经过期
+          return !(i.use_oid || Date.now() > Date.parse(i.limit_time));
+        },
+        /* 时间转换 */
+        getLocalDate: function (ISODate) {
+          var d = new Date();
+          d.setTime(Date.parse(ISODate));
+          return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width,user-scalable=no" name="viewport">
+  <title>消费明细</title>
+  <link rel="stylesheet" href="/style/min/core.css">
+  <link rel="stylesheet" href="/style/min/trade_detail.css">
+  <style>
+    body{
+      background: #ffffff;
+    }
+    .justify div:first-child{
+      color: #666666;
+      font-size: 16px;
+    }
+    .justify div:first-child{
+      color: #333333;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="justify">
+      <div class="dib" style="color:#333">支付金额:</div>
+      <div class="rmb dib amount">{{ amount / 100 }}</div>
+    </div>
+    <hr color="#E7ECED">
+    <div class="justify">
+      <div class="dib">交易类型:</div>
+      <div class="dib">{{ payType(paytype) }}加油</div>
+    </div>
+    <div class="justify">
+      <div class="dib">时&emsp;&emsp;间:</div>
+      <div class="dib">{{ payTime(paytime) }}</div>
+    </div>
+    <div class="justify">
+      <div class="dib">交易订单:</div>
+      <div class="dib">{{ oid }}</div>
+    </div>
+    <div class="justify">
+      <div class="dib">加油油号:</div>
+      <div class="dib">{{ discountinfo.oil }}#</div>
+    </div>
+    <div class="justify">
+      <div class="dib">加油金额:</div>
+      <div class="dib">{{ discountinfo.price }}</div>
+    </div>
+    <div class="justify">
+      <div class="dib">加油升数:</div>
+      <div class="dib">{{ discountinfo.quantity }}L</div>
+    </div>
+    <template v-for="item in discountinfo.discount">
+      <div class="justify">
+        <div class="dib">{{ item.name }}:</div>
+        <div class="dib">{{ item.value }}</div>
+      </div>
+    </template>
+    <div class="justify">
+      <div class="dib" style="letter-spacing:5px">加油站:</div>
+      <div class="dib">{{ shop.name }}</div>
+    </div>
+  </div>
+
+  <script src="//cdn.bootcss.com/vue/2.1.10/vue.min.js"></script>
+  <script src="/javascript/dateformat.js"></script>
+  <script>
+    var data = <{orderData}>;
+    new Vue({
+      el: '#app',
+      data: data,
+      computed: {
+        discountinfo: function () {
+          return JSON.parse(this.extendinfo).dcp;
+        }
+      },
+      methods: {
+        payType: function (payType) {
+          switch (payType) {
+            case 1:
+              return '微信'//'哆啦宝';
+            case 2:
+              return '微信';
+            case 3:
+              return '支付宝';
+              case 4:
+                  return '余额'
+            default:
+              return '微信';
+          }
+        },
+        payTime: function (paytime) {
+          return new Date(paytime).toFormatString('yyyy-MM-dd HH:mm:ss');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,user-scalable=no" name="viewport">
+    <title>复制链接在浏览器打开</title>
+    <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/js-url/2.3.1/url.min.js"></script>
+    <script src="//cdn.bootcss.com/Base64/1.0.0/base64.min.js"></script>
+</head>
+<body>
+<p id="main"></p>
+<script type="text/javascript">
+    window.onload = function(){
+        if(isWeiXin()){
+            $("#main").text("复制到外部浏览器打开")
+        }else{
+            window.location.href=decodeURIComponent(atob($.url("?jump")))
+        }
+    }
+    function isWeiXin(){
+        var ua = window.navigator.userAgent.toLowerCase();
+        if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+            return true;
+        }else{
+            return false;
+        }
+    }
+</script>
+</body>
+</html>

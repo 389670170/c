@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>红包分享</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/style/resets.css">
+  <link rel="stylesheet" href="/style/style.css">
+</head>
+<body>
+<div class="page">
+  <div class="content-box">
+    <div class="hb-start-box">
+      <div class="hb-img">
+        <img src="http://om87tl0nf.bkt.clouddn.com/hb.png" >
+      </div>
+      <div class="hb-fx-desc">
+        <p class="ma-b10">恭喜！您获得可分享的红包</p>
+        <p>分享红包给好友</p>
+        <p>抢到的红包可用来抵扣微信支付金额</p>
+      </div>
+      <div class="hb-fx-btnBox">
+        <a href="javascript:;" class="fhb-btn">发红包</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backBox" id="modalBack">
+  <div class="modal-cont">
+    <div class="clearfix">
+      <img src="http://om87tl0nf.bkt.clouddn.com/arrow.png" class="close">
+    </div>
+    <div class="modal-desc-box">
+      <p>请点击右上角,</p>
+      <p>将它发送到指定朋友</p>
+      <p>或分享到朋友圈</p>
+    </div>
+  </div>
+</div>
+
+<script src="//cdn.bootcss.com/jquery/2.2.0/jquery.min.js"></script>
+<script src="//res.wx.qq.com/open/js/jweixin-1.1.0.js"></script>
+<script src="/weixin/wxsign2"></script>
+<script>
+  /* 打开模态框 */
+  $('.fhb-btn').click(function(){
+      $('#modalBack').fadeIn(600);
+      wx.showOptionMenu();
+  });
+
+  /* 关闭模态框 */
+  $('#modalBack').click(function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    $('#modalBack').fadeOut(600);
+  });
+  /* 关闭模态框 */
+  $('.close').click(function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    $('#modalBack').fadeOut(600);
+  });
+  $('.modal-desc-box p').click(function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    $('#modalBack').fadeIn();
+  })
+
+  var sharelink="<{sharelink}>"
+  wx.ready(function() {
+      wx.hideMenuItems({
+          menuList: ["menuItem:share:qq", "menuItem:share:weiboApp", "menuItem:favorite", "menuItem:share:facebook", "menuItem:share:QZone",
+              "menuItem:editTag", "menuItem:delete", "menuItem:copyUrl", "menuItem:originPage", "menuItem:readMode", "menuItem:openWithQQBrowser"
+              , "menuItem:openWithSafari", "menuItem:share:email", "menuItem:share:brand"]
+      });
+
+      var sharedata = {
+          title: '<{forshop_str}>'+'给您发红包了！', // 分享标题
+          desc: '抢加油红包抵现金！点我领取！', // 分享描述
+          link: sharelink, // 分享链接
+          imgUrl: 'http://om87tl0nf.bkt.clouddn.com/hb.png?imageView2/1/w/80/h/80/format/png/q/75|imageslim', // 分享图标
+          success: function (res) {
+              alert('已分享');
+          },
+      }
+      wx.onMenuShareTimeline(sharedata);
+      wx.onMenuShareAppMessage(sharedata);
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width,user-scalable=no" name="viewport">
+  <title>充值</title>
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_etumb9zdfpf1or.css">
+  <link rel="stylesheet" href="/style/core.css">
+  <link rel="stylesheet" href="/style/pay_confirm.css">
+  <style>
+    .btnchange{
+      margin-left:15px;
+      float: left;
+      border:1px solid #cccccc;
+      padding: 5px;
+      font-size: 14px;
+      display: block;
+      line-height: 30px;
+      text-align: center;
+      border-radius: 10px
+    }
+    .radiobox:checked + label {
+      background: rgba(255,0,0,0.9);
+      color: white;
+    }
+    .dib img{
+      width: 60px;
+      height: 60px;
+      margin-left: 10%;
+    }
+    .order-details-panel{
+      overflow: hidden;
+    }
+    .dibimg{
+      float: left;
+    }
+    .dibimg img{
+      background: white;
+      border-radius: 50%;
+    }
+    .dibtext{
+      margin-top: 3%;
+      margin-left: 10%;
+    }
+    .other{
+      margin-top: 2%;
+      font-size: 14px;
+      background: none;
+    }
+    #cc{
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top:0;
+      left:0;
+      background: rgba(0,0,0,.5);
+      z-index: 9999;
+    }
+    #ceng{
+      width: 80%;
+      margin: 0 10%;
+      position: absolute;
+      top:28%;
+      left:0;
+      text-align: left;
+      color: black;
+      background: white;
+      border-radius: 5%;
+    }
+    #ceng p{
+      padding:0 5%;
+    }
+    #ceng p span{
+      font-weight: bolder;
+    }
+    #ok{
+      padding:0;
+      overflow: hidden;
+      color: black;
+      font-size: 16px;
+      text-align: center;
+      border-top: 1px solid #cccccc;
+      line-height: 40px;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .title{
+      text-align: center;
+      color: red;
+      padding: 0;
+      margin: 0;
+      line-height: 40px;
+      border-bottom: 1px solid red
+    }
+    .pic {
+      color: black;
+      font-size: 16px;
+      font-weight: bolder;
+      background: url("http://oqcdoekqa.bkt.clouddn.com/%E5%BE%AE%E4%BF%A1banner%E8%83%8C%E6%99%AF%20%281%29%20%281%29.jpg")no-repeat center;
+      background-size: 100% 100%;
+      border-radius: 10px;
+      padding-top: 6%;
+    }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <div class="fieldset-group fieldset-margin">
+      <div class="fieldset-line"></div>
+      <span class="fieldset-title">用户信息</span>
+    </div>
+    <div class="order-details-panel pic">
+      <div >
+        <div class="dib dibimg">
+          <img src="http://oqcdoekqa.bkt.clouddn.com/%E5%BE%AE%E4%BF%A1%E5%85%85%E5%80%BC%E9%A1%B5%E9%9D%A2.png" alt="">
+        </div>
+        <div class="dib dibtext">
+          {{ rundata.srcdata.name }}
+          <p>{{ rundata.srcdata.phone.join(",") }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="order-details-panel other">
+      <div>
+        <div class="dib" style="float: left;">可用余额：</div>
+        <div class="dib" style="float:right;"><span class="rmb">&yen;</span> {{ rundata.srcdata.balance / 100 }}</div>
+      </div>
+    </div>
+    <div class="fieldset-group fieldset-margin">
+      <div class="fieldset-line"></div>
+      <span class="fieldset-title">充值金额</span>
+    </div>
+    <div class="pay-type-panel">
+      <template v-for="one in rundata.srcdata.charge_bonus">
+        <input name="payAmount" :id="'count'+one.charge" style="display: none" type="radio" class="radiobox" v-model="charge" :value="one.charge">
+        <label class="for-label btnchange" :for="'count'+one.charge">
+          充{{one.charge}} 立赠{{one.bonus}}元
+        </label>
+
+      </template>
+    </div>
+    <div id="cc" v-show="isShow" style="display: none">
+      <div id="ceng">
+        <h3 class="title">温馨提示</h3>
+        <p style="padding-top: 5%">1. 使用余额支付<span>不能享受其他优惠</span>（如：使用红包，满减优惠，油价优惠等）</p>
+        <p>2. 余额支付可能<span >不适用所有油品</span>， 详情请咨询加油站！</p>
+        <p id="ok"@click="duolapay">确认</p>
+      </div>
+    </div>
+    <button class="btn btn-block btn-bottom" v-on:click="showOk()"  >确认支付</button>
+  </div>
+  <script src="//cdn.bootcss.com/vue/2.1.10/vue.min.js"></script>
+  <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+  <script src="//res.wx.qq.com/open/js/jweixin-1.1.0.js"></script>
+  <script src="/weixin/wxsign2"></script>
+  <script>
+    var svrdata=<{svrdata}>;
+    var rundata={srcdata:svrdata,charge:"1000"};
+    var app = new Vue({
+      el: "#main",
+      data: {
+        rundata:rundata,
+        isShow:false,
+        charge: svrdata.charge_bonus[0].charge
+      },
+      methods: {
+        showOk:function () {
+          this.isShow=true;
+        },
+        duolapay:function () {
+          var params={prise:this.charge}
+          $.ajax({
+            type: 'post',
+            url: '/pay/duolacharge',
+            data: JSON.stringify(params),
+            contentType: "application/json",
+            dataType: 'json',
+            traditional: true,
+            success: function (data) {
+              if(data.res==0)
+                window.location.href=data.redirect
+            },
+          })
+        },
+        wxpay:function () {
+          var params={prise:rundata.charge}
+          $.ajax(
+            {
+              type : "POST",
+              url:"/weixin/chargestart",
+              data: JSON.stringify(params),
+              contentType: "application/json",
+              dataType:"json",
+              success:function (json) {
+                WeixinJSBridge.invoke(
+                  'getBrandWCPayRequest', json,
+                  function(res){
+//                    alert(JSON.stringify(res))
+                    if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                      confirm("支付已成功")
+                      wx.closeWindow()
+                    }
+                  }
+                );
+              },
+              complete:function () {
+                payconfirmdata.paybn_disable=false
+              }
+            })
+        },
+        closeOk: function() {
+            this.isShow=false;
+        }
+      }
+    })
+
+    wx.ready(function() {
+
+    })
+  </script>
+</body>
+</html>

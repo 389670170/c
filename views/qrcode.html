@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,user-scalable=no" name="viewport">
+    <title>Title</title>
+    <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+</head>
+<body>
+<div id="qrcodepos" style="display: none"></div>
+<img id="qrcodeimg">
+<script>
+    var data='<{data}>'
+    $("#qrcodepos").qrcode({
+        text	: data,
+        mode: 2,
+        label: '扫码加油'
+    });
+    var canvas = $('#qrcodepos canvas');
+    var img = canvas.get(0).toDataURL("image/png");
+    $("#qrcodeimg").attr("src",img)
+</script>
+</body>
+</html>
